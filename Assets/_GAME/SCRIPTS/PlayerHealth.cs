@@ -7,6 +7,7 @@ public class PlayerHealth : MonoBehaviour, IHealth
 {
     [SerializeField] private float maxHealth = 200;
     private Player player;
+    private PlayerSounds sounds;
     private float health = 200;
     private float updateTime = 0.5f;
 
@@ -16,6 +17,7 @@ public class PlayerHealth : MonoBehaviour, IHealth
 
     private void Start()
     {
+        sounds = GetComponent<PlayerSounds>();
         health = maxHealth;
         player = GetComponent<Player>();
     }
@@ -27,6 +29,7 @@ public class PlayerHealth : MonoBehaviour, IHealth
         {
             Debug.Log($"Player Hearted with !!! {damage}");
             health -= damage; 
+            sounds.PlayHearted();
             OnHealthChanged?.Invoke(maxHealth, health);
             if(health<=0)
             {

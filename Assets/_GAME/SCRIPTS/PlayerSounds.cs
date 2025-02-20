@@ -9,6 +9,9 @@ public class PlayerSounds : MonoBehaviour
     [SerializeField] private AudioClip stepSound;
     [SerializeField] private AudioClip jumpInit;
     [SerializeField] private AudioClip jumpLanding;
+    [SerializeField] private AudioClip hearted;
+    [SerializeField] private AudioClip death;
+    [SerializeField] private AudioClip clubSwish;
 
 
     void Start()
@@ -20,6 +23,7 @@ public class PlayerSounds : MonoBehaviour
 
     public void PlayJumpInitSound()
     {
+        audioSource.Stop();
         audioSource.clip = jumpInit;
         audioSource.Play();
     }
@@ -30,13 +34,34 @@ public class PlayerSounds : MonoBehaviour
         audioSource.Play();
     }
 
+    public void PlaySwish()
+    {
+        audioSource.Stop();
+        audioSource.clip = clubSwish;
+        audioSource.Play();
+    }
+
+    public void PlayDeath()
+    {
+        audioSource.Stop();
+        audioSource.clip = death;
+        audioSource.Play();
+    }
+    public void PlayHearted()
+    {
+        audioSource.Stop();
+        audioSource.clip = hearted;
+        audioSource.Play();
+    }
+
     public void Step()
     {
         if (stepSound != null)
         {
-            if (audioSource.isPlaying) return;            
-                //audioSource.clip = stepSound;
-                //audioSource.Play(); 
+            if (audioSource.isPlaying) return;
+            audioSource.clip = stepSound;
+            audioSource.Play();
         }
     }
+
 }

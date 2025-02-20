@@ -19,12 +19,15 @@ public class Player : MonoBehaviour
     private Transform playerTransform;
     private Vector3 moveDirection;
     private Vector3 lookVector;
-    float verticalVelocity;
+    private float verticalVelocity;
+    private PlayerSounds sounds;
+
 
     private void OnEnable()
     {
 
-        input.OnTorchPressedEvent += GetTorch;        
+        input.OnTorchPressedEvent += GetTorch;
+        input.OnAttack += Attack;
     }
 
     public void GetTorch()
@@ -41,6 +44,7 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         input = GetComponent<InputPlayer>();
+        sounds = GetComponent<PlayerSounds>();
     }
 
     private void Start()
@@ -58,13 +62,19 @@ public class Player : MonoBehaviour
         animator.SetFloat("Speed", (moveDirection.magnitude * 5)>0.01f? moveDirection.magnitude *5 : 0);
     }
 
+    private void Attack()
+    {
+        animator.SetTrigger("Attack");
+        sounds.PlaySwish();
+    }
+
     public void Jump()
     {
         if (characterController.isGrounded)
         {
+            sounds.PlayJumpInitSound();
             animator.SetTrigger("Jump 0");
             verticalVelocity = MathF.Sqrt(jumpHieght * gravity * -2);
-
         }
     }
 
@@ -96,6 +106,7 @@ public class Player : MonoBehaviour
 
     public void Death()
     {
+        sounds.PlayDeath();
         animator.SetTrigger("Death");
     }
 }

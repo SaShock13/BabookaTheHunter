@@ -15,13 +15,14 @@ public class InputPlayer : MonoBehaviour
     private float mouseX, mouseY;
 
     public event Action OnTorchPressedEvent;
+    public event Action OnAttack;
 
     [SerializeField] private UnityEvent <Vector3> onMove = null;
     [SerializeField] private UnityEvent onJump = null;
     [SerializeField] private UnityEvent onTorch = null;
     [SerializeField] private UnityEvent <float,float> onMouseMove = null;
     [SerializeField] private float sensetivity = 200;
-
+    [SerializeField] private float minMove = 0.1f;
 
     private void Start()
     {
@@ -38,7 +39,9 @@ public class InputPlayer : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            animator.SetTrigger("Attack");
+            
+            OnAttack?.Invoke();
+
         }
 
         xInput = Input.GetAxis("Horizontal");        
@@ -66,8 +69,8 @@ public class InputPlayer : MonoBehaviour
 
         if (isMoving)
         {
-            moveDirection.x = xInput;
-            moveDirection.z = yInput;
+            moveDirection.x = MathF.Abs(xInput) > minMove? xInput : 0;
+            moveDirection.z = MathF.Abs(yInput) > minMove ? yInput : 0;
             moveDirection.y = 0;
 
             //Debug.Log($"Player make a move!! {this}");
