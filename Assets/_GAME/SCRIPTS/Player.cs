@@ -88,6 +88,7 @@ public class Player : MonoBehaviour
         if (characterController.isGrounded)
         {
             animator.SetBool("Grounded", true);
+            verticalVelocity = -2f;
         }
         else
         {
@@ -95,7 +96,7 @@ public class Player : MonoBehaviour
         }
         lookVector = cameraTransform.forward;
         lookVector.y = 0;
-        playerTransform.rotation = Quaternion.Lerp(playerTransform.rotation, Quaternion.LookRotation(lookVector), Time.deltaTime * targetTurnSpeed);
+        playerTransform.rotation = Quaternion.Lerp(playerTransform.rotation, Quaternion.LookRotation(lookVector), Time.deltaTime * targetTurnSpeed); // поворачивает игрока в соторону взгдяда камеры
     }
 
     private void UseGravity()

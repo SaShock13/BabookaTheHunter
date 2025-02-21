@@ -26,7 +26,6 @@ public class InputPlayer : MonoBehaviour
 
     private void Start()
     {
-        Cursor.visible = false;
         animator = GetComponent<Animator>();
     }
 
