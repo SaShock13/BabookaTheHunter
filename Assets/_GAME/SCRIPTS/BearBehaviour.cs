@@ -7,6 +7,7 @@ public class BearBehaviour : MonoBehaviour
     private Animator animator;
     private Vector3 currentDestination;
     private int currentDestinationIndex = 0;
+
     [SerializeField] private Transform[] walkPoints;
     [SerializeField] private float walkSpeed;
     [SerializeField] private float rotationSpeed = 2f;
@@ -36,6 +37,4 @@ public class BearBehaviour : MonoBehaviour
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(direction),Time.deltaTime * rotationSpeed);
         transform.position += direction * walkSpeed * Time.deltaTime;
     }
-
-
 }

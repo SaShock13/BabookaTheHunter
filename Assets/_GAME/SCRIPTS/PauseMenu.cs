@@ -6,19 +6,17 @@ using Zenject;
 
 public class PauseMenu : MonoBehaviour
 {
-    [SerializeField] private GameObject pauseMenuPanel;
-    [SerializeField] private GameObject mainMenuPanel;
-
     private InputPlayer _input;
     private bool isPaused = false;
 
+    [SerializeField] private GameObject pauseMenuPanel;
+    [SerializeField] private GameObject mainMenuPanel;
 
     [Inject]
     public void Construct(InputPlayer input)
     {
         _input = input;
     }
-
 
     public void Pause()
     {
@@ -43,7 +41,6 @@ public class PauseMenu : MonoBehaviour
         isPaused = false;
         Cursor.visible = false;
         _input.enabled = true;
-
     }
 
     public void ExitGame()
@@ -57,7 +54,6 @@ public class PauseMenu : MonoBehaviour
         isPaused= false;
         pauseMenuPanel.SetActive(false);
         mainMenuPanel.SetActive(true);
-
     }
 
     private void Update()

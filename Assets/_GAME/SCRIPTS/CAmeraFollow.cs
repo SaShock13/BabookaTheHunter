@@ -13,12 +13,21 @@ public class CAmeraFollow : MonoBehaviour
     private Transform lookTransform;
     private float rotationY,rotationX;
 
+    private void OnEnable()
+    {
+        InputPlayer.OnMouseMoveEvent += OnMouseMove;
+    }
+
+    private void OnDisable()
+    {
+        InputPlayer.OnMouseMoveEvent -= OnMouseMove;
+    }
+
     void Start()
     {
         lookTransform = transform;
         rotationY = 0;
         rotationX = lookTransform.rotation.x;
-
     }
 
     void Update()
@@ -32,8 +41,6 @@ public class CAmeraFollow : MonoBehaviour
         rotationX -= mouseY;
         rotationX = Mathf.Clamp(rotationX, -30, 50);
         lookTransform.localRotation = Quaternion.Euler(rotationX, rotationY * -1, 0);
-        //targetLookVector = lookTransform.forward;
-        //targetLookVector.y = 0;
-        //targetTransform.rotation = Quaternion.Lerp(targetTransform.rotation, Quaternion.LookRotation(targetLookVector), Time.deltaTime * targetTurnSpeed);
     }
+
 }
