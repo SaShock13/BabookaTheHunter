@@ -4,13 +4,18 @@ using UnityEngine;
 
 public class FallingStoneTrap : MonoBehaviour
 {
-    [SerializeField] Rigidbody stoneRigidbody;
+    [SerializeField] Rigidbody rigidbody;
     //todo согласовать с толканием или сделать падающий но не толкаемый
+
+    private void Start()
+    {
+        rigidbody.isKinematic = true;
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            stoneRigidbody.isKinematic = false;
+            rigidbody.isKinematic = false;
         }
     }
 }

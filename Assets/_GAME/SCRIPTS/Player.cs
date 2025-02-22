@@ -64,7 +64,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        Cursor.visible = false;
+        //Cursor.visible = false;
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         playerTransform = transform;      

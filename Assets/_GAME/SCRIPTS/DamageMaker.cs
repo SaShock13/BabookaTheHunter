@@ -1,16 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Zenject;
+﻿using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class DamageMaker : MonoBehaviour
 {    
     private IHealth healthToDamage;
     private Rigidbody rigidBody;
-    private bool isDanger = true;
 
+    /// <summary>
+    /// Импульс солкновения по оси Y
+    /// </summary>
+    private float collisionYImpulse;
+
+    [SerializeField] private bool isDanger = true;
     [SerializeField] private float damage = 50;
-    [SerializeField] private float minDamageMagnitude = 1f; // минимальна скорость камня для причинения дамага
+    [SerializeField] private float minDamageYImpulse = 1f; // минимальное сила столкновения камня по Y для причинения дамага
 
     private void Start()
     {
@@ -21,15 +24,12 @@ public class DamageMaker : MonoBehaviour
     {
         if (collision.transform.TryGetComponent<IHealth>(out healthToDamage) && isDanger)
         {
-
-            Debug.Log($"IHealth collision with Y velocity {rigidBody.velocity.y}");
-
-
-            if (Mathf.Abs( rigidBody.velocity.y) > minDamageMagnitude)
+            collisionYImpulse = collision.impulse.y;
+            Debug.Log($"IHealth collision with Y impulse {collisionYImpulse}");
+            if (collisionYImpulse > minDamageYImpulse)
             {
                 healthToDamage.TakeDamage(damage);
             }
-            isDanger = false;
         }
     }
 }
