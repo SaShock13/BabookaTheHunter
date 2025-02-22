@@ -41,6 +41,7 @@ public class PushableStone : MonoBehaviour , IInteractable
     {
         if (other.CompareTag("Player") && !isPlayerInTrigger)
         {
+            rigidBody.constraints = RigidbodyConstraints.FreezeAll;
             Debug.Log($"intrigger of stone {this}");
             playerTransform = other.transform;
             _player.interactableObject = this;
@@ -52,6 +53,7 @@ public class PushableStone : MonoBehaviour , IInteractable
     {
         if (other.CompareTag("Player")&& isPlayerInTrigger)
         {
+            rigidBody.constraints = RigidbodyConstraints.None;
             Debug.Log($"OUT Trigger {other.name}");
             isPlayerInTrigger = false;
             playerTransform = null;
@@ -61,11 +63,12 @@ public class PushableStone : MonoBehaviour , IInteractable
 
     public void Interact()
     {
-        //StartCoroutine(ActivateStone());
+        StartCoroutine(ActivateStone());
     }
 
     private IEnumerator ActivateStone()
     {
+        rigidBody.constraints = RigidbodyConstraints.None;
         Debug.Log($"Activate Stone {this}");
         rigidBody.isKinematic = false;
         var pushDirection = transform.position - playerTransform.position;        
