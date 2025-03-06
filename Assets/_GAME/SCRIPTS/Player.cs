@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     private Vector3 lookVector;
     private float verticalVelocity;
     private PlayerSounds sounds;
+    private Hanging hanging;
 
     [SerializeField] private float runSpeed = 2;
     [SerializeField] private float rotateSpeed = 2;
@@ -25,24 +26,25 @@ public class Player : MonoBehaviour
     [SerializeField] private Transform cameraTransform;
 
     public  IInteractable interactableObject = null ;
+    public bool isGravityActive = true;
 
     private void OnEnable()
     {
-        InputPlayer.OnTorchPressedEvent += GetTorch;
-        InputPlayer.OnAttackEvent += Attack;
-        InputPlayer.OnJumpEvent += Jump;
-        InputPlayer.OnMoveEvent += MovePlayer; 
-        InputPlayer.OnInteractEvent += Interact; 
+        //InputPlayer.OnTorchPressedEvent += GetTorch;
+        //InputPlayer.OnAttackEvent += Attack;
+        //InputPlayer.OnJumpEvent += Jump;
+        //InputPlayer.OnMoveEvent += MovePlayer; 
+        //InputPlayer.OnInteractEvent += Interact; 
         
     }
 
     private void OnDisable()
     {
-        InputPlayer.OnTorchPressedEvent -= GetTorch;
-        InputPlayer.OnAttackEvent -= Attack;
-        InputPlayer.OnJumpEvent -= Jump;
-        InputPlayer.OnMoveEvent -= MovePlayer;
-        InputPlayer.OnInteractEvent -= Interact;
+        //InputPlayer.OnTorchPressedEvent -= GetTorch;
+        //InputPlayer.OnAttackEvent -= Attack;
+        //InputPlayer.OnJumpEvent -= Jump;
+        //InputPlayer.OnMoveEvent -= MovePlayer;
+        //InputPlayer.OnInteractEvent -= Interact;
     }
 
     public void GetTorch()
@@ -66,6 +68,7 @@ public class Player : MonoBehaviour
     {
         //Cursor.visible = false;
         characterController = GetComponent<CharacterController>();
+        hanging = GetComponent<Hanging>();
         animator = GetComponent<Animator>();
         playerTransform = transform;      
     }
@@ -77,7 +80,7 @@ public class Player : MonoBehaviour
         animator.SetFloat("Speed", (moveDirection.magnitude * 5)>0.01f? moveDirection.magnitude *5 : 0);
     }
 
-    private void Interact()
+    public void Interact()
     {
         if (interactableObject != null)
         {
@@ -85,7 +88,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void Attack()
+    public void Attack()
     {
         animator.SetTrigger("Attack");
         sounds.PlaySwish();
@@ -95,11 +98,17 @@ public class Player : MonoBehaviour
     {
         if (characterController.isGrounded)
         {
+            //hanging.StartHang();
             sounds.PlayJumpInitSound();
             animator.SetTrigger("Jump 0");
             verticalVelocity = MathF.Sqrt(jumpHieght * gravity * -2);
         }
     }
+
+    public void StopTryHang()
+    {
+        //hanging.StopHang();
+    }    
 
     private void Update()
     {
@@ -113,15 +122,26 @@ public class Player : MonoBehaviour
         {
             animator.SetBool("Grounded", false);
         }
+        
+    }
+
+    public void LookCamera()
+    {
         lookVector = cameraTransform.forward;
         lookVector.y = 0;
-        playerTransform.rotation = Quaternion.Lerp(playerTransform.rotation, Quaternion.LookRotation(lookVector), Time.deltaTime * targetTurnSpeed); // поворачивает игрока в соторону взгдяда камеры
+        playerTransform.rotation = 
+            Quaternion.Lerp(playerTransform.rotation, 
+            Quaternion.LookRotation(lookVector), 
+            Time.deltaTime * targetTurnSpeed); // поворачивает игрока в соторону взгдяда камеры
     }
 
     private void UseGravity()
     {
-        verticalVelocity += gravity * Time.deltaTime;
-        characterController.Move(Vector3.up * verticalVelocity * Time.deltaTime);
+        if (isGravityActive)
+        {
+            verticalVelocity += gravity * Time.deltaTime;
+            characterController.Move(Vector3.up * verticalVelocity * Time.deltaTime); 
+        }
     }
 
     public void Death()
@@ -129,4 +149,6 @@ public class Player : MonoBehaviour
         sounds.PlayDeath();
         animator.SetTrigger("Death");
     }
+
 }
+
