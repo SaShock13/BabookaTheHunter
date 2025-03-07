@@ -27,36 +27,18 @@ public class Player : MonoBehaviour
 
     public  IInteractable interactableObject = null ;
     public bool isGravityActive = true;
-
-    private void OnEnable()
-    {
-        //InputPlayer.OnTorchPressedEvent += GetTorch;
-        //InputPlayer.OnAttackEvent += Attack;
-        //InputPlayer.OnJumpEvent += Jump;
-        //InputPlayer.OnMoveEvent += MovePlayer; 
-        //InputPlayer.OnInteractEvent += Interact; 
-        
-    }
-
-    private void OnDisable()
-    {
-        //InputPlayer.OnTorchPressedEvent -= GetTorch;
-        //InputPlayer.OnAttackEvent -= Attack;
-        //InputPlayer.OnJumpEvent -= Jump;
-        //InputPlayer.OnMoveEvent -= MovePlayer;
-        //InputPlayer.OnInteractEvent -= Interact;
-    }
+    private bool isAdjusting = false ;
+    private float adjustYValue = 0;
+    [SerializeField] private float adjustSpeed = 2f;
 
     public void GetTorch()
     {
-
         Debug.Log($"Torch in player {this}");
         if (torch.activeInHierarchy)
         { torch.SetActive(false); }
         else torch.SetActive(true);
     }
 
-    //todo прыжок очень высокий Иногда??!!
     //todo Поджигание факела от костра сделать?
     private void Awake()
     {
@@ -98,17 +80,24 @@ public class Player : MonoBehaviour
     {
         if (characterController.isGrounded)
         {
-            //hanging.StartHang();
+            StartCoroutine(TryHang());
             sounds.PlayJumpInitSound();
             animator.SetTrigger("Jump 0");
             verticalVelocity = MathF.Sqrt(jumpHieght * gravity * -2);
         }
     }
 
+    private IEnumerator TryHang()
+    {
+        hanging.StartTryHang();
+        yield return new WaitForSeconds(1.5f);
+        StopTryHang();
+    }    
+
     public void StopTryHang()
     {
-        //hanging.StopHang();
-    }    
+        hanging.StopTryHang();
+    }
 
     private void Update()
     {
@@ -122,7 +111,33 @@ public class Player : MonoBehaviour
         {
             animator.SetBool("Grounded", false);
         }
-        
+        if (isAdjusting)
+        {
+
+            Debug.Log($"Adjusting Y position {this}");
+            AdjustionYPosition();
+        }
+    }
+
+    public void StartYAdjust(float adjustingYValue)
+    {
+        isAdjusting = true;
+        adjustYValue = adjustingYValue;
+
+    }
+
+    private void AdjustionYPosition()
+    {        
+        Vector3 pos = transform.position;
+        pos.y = Mathf.Lerp(pos.y, adjustYValue, Time.deltaTime * adjustSpeed);
+        transform.position = pos;
+
+        if (Mathf.Abs(pos.y - adjustYValue) < 0.01f) // Остановка при достижении цели
+        {
+            isAdjusting = false;
+            adjustYValue = 0;
+            
+        }
     }
 
     public void LookCamera()
