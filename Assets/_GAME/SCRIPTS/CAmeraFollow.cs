@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 public class CAmeraFollow : MonoBehaviour
 {
-    [SerializeField] private Transform targetTransform;
+    public Transform targetTransform;
     [SerializeField] private Vector3 offset;
     [SerializeField] private float verticalLookOffset = 1f;
     

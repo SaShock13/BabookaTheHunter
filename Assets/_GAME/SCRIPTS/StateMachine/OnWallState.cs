@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class OnWallState : State
@@ -14,7 +15,7 @@ public class OnWallState : State
         _player.isGravityActive = false;
         _player.StopTryHang();
         _animator.SetBool("Hanging", true);
-        //Debug.Log("OnWall State Enter");
+        _animator.SetFloat("Speed", 0);
     }
 
     public override void Exit()
@@ -32,5 +33,18 @@ public class OnWallState : State
         {
             stateMachine.SetState<OnGroundState>();
         }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+
+            Debug.Log($"Climb {this}");
+            _animator.SetTrigger("Climb");
+            var newPosition = _player.transform.position + _player.transform.forward;
+            newPosition.y += 2.4f;
+            _player.Climb(newPosition);
+            //stateMachine.SetState<OnGroundState>();
+            
+        }
     }
+
+    
 }

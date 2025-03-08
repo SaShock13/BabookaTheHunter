@@ -4,11 +4,13 @@ public class OnGroundState : State
 {
     private InputPlayer _input;
     private Player _player;
+    private PlayerInteractor _interactor;
 
-    public OnGroundState(StateMachine stateMachine,Player player, InputPlayer input) : base(stateMachine)
+    public OnGroundState(StateMachine stateMachine,Player player, InputPlayer input, PlayerInteractor interactor) : base(stateMachine)
     {
         _input = input;
         _player = player;
+        _interactor = interactor;
     }
 
     public override void Enter()
@@ -17,7 +19,7 @@ public class OnGroundState : State
         InputPlayer.OnAttackEvent += _player.Attack;
         InputPlayer.OnJumpEvent += _player.Jump;
         InputPlayer.OnMoveEvent += _player.MovePlayer;
-        InputPlayer.OnInteractEvent += _player.Interact;
+        InputPlayer.OnInteractEvent += _interactor.Interact;
         //Debug.Log("Onground State Enter");
     }
 
@@ -28,12 +30,11 @@ public class OnGroundState : State
         InputPlayer.OnAttackEvent -= _player.Attack;
         InputPlayer.OnJumpEvent -= _player.Jump;
         InputPlayer.OnMoveEvent -= _player.MovePlayer;
-        InputPlayer.OnInteractEvent -= _player.Interact;
+        InputPlayer.OnInteractEvent -= _interactor.Interact;
     }
 
     public override void Update()
     {
         _player.LookCamera();
-        //Debug.Log("Onground State Update");
     }
 }

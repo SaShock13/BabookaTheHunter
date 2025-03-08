@@ -22,21 +22,34 @@ public class Player : MonoBehaviour
     [SerializeField] private float gravity = -9.8f;
     [SerializeField] private float jumpForceDelay = 0.1f; // для синхронизации движения с анимацией 
     [SerializeField] private float targetTurnSpeed = 10;
-    [SerializeField] private GameObject torch;
+    [SerializeField] private GameObject torchObj;
     [SerializeField] private Transform cameraTransform;
 
     public  IInteractable interactableObject = null ;
     public bool isGravityActive = true;
     private bool isAdjusting = false ;
     private float adjustYValue = 0;
-    [SerializeField] private float adjustSpeed = 2f;
+    private float adjustSpeed = 13f;
+    private float playerHeight;
 
     public void GetTorch()
     {
         Debug.Log($"Torch in player {this}");
-        if (torch.activeInHierarchy)
-        { torch.SetActive(false); }
-        else torch.SetActive(true);
+        if (torchObj.activeInHierarchy)
+        { 
+            torchObj.GetComponent<Torch>().SetUnLighted();
+            torchObj.SetActive(false); 
+
+        }
+        else torchObj.SetActive(true);
+    }
+
+    public void LightTorch()
+    {
+        if (torchObj.activeInHierarchy)
+        {
+            torchObj.GetComponent<Torch>().SetLighted(); 
+        }
     }
 
     //todo Поджигание факела от костра сделать?
@@ -62,13 +75,13 @@ public class Player : MonoBehaviour
         animator.SetFloat("Speed", (moveDirection.magnitude * 5)>0.01f? moveDirection.magnitude *5 : 0);
     }
 
-    public void Interact()
-    {
-        if (interactableObject != null)
-        {
-            interactableObject.Interact();
-        }
-    }
+    //public void Interact()
+    //{
+    //    if (interactableObject != null)
+    //    {
+    //        interactableObject.Interact();
+    //    }
+    //}
 
     public void Attack()
     {
@@ -111,33 +124,65 @@ public class Player : MonoBehaviour
         {
             animator.SetBool("Grounded", false);
         }
-        if (isAdjusting)
+
+
+        //For Degub
+        if(Input.GetKey(KeyCode.T))
         {
-
-            Debug.Log($"Adjusting Y position {this}");
-            AdjustionYPosition();
+            LightTorch();
         }
-    }
-
-    public void StartYAdjust(float adjustingYValue)
-    {
-        isAdjusting = true;
-        adjustYValue = adjustingYValue;
 
     }
 
-    private void AdjustionYPosition()
+    public void StartYAdjust(float adjustingYValue, Vector3 normal)
     {        
-        Vector3 pos = transform.position;
-        pos.y = Mathf.Lerp(pos.y, adjustYValue, Time.deltaTime * adjustSpeed);
-        transform.position = pos;
+        StartCoroutine(AdjustionYPositionCoroutine(adjustingYValue));
+        StartCoroutine(AdjustionRotationCoroutine(normal));
 
-        if (Mathf.Abs(pos.y - adjustYValue) < 0.01f) // Остановка при достижении цели
+    }
+
+
+    // todo подкорректировать положение , отдалить немного от уступа
+    private IEnumerator AdjustionYPositionCoroutine(float adjustingYValue)
+    {
+        var targetY = transform.position.y + adjustingYValue;
+
+        Debug.Log($"targetY {targetY}");
+        while (Mathf.Abs(transform.position.y - targetY) > 0.01f)
         {
-            isAdjusting = false;
-            adjustYValue = 0;
-            
+            var newPosition = transform.position;
+            newPosition.y = Mathf.Lerp(newPosition.y, targetY, Time.deltaTime * adjustSpeed);
+            transform.position = newPosition;
+            yield return null;
+        }        
+    }
+    private IEnumerator AdjustionRotationCoroutine(Vector3 normal)
+    {        
+        Quaternion targetRotation = Quaternion.LookRotation(-normal, Vector3.up);
+        float angle = 1;        
+        while (Mathf.Abs( angle ) > 0.05f)
+        {
+            angle = Quaternion.Angle(transform.rotation, targetRotation);
+            Debug.Log($"rotate adjusting  {angle}");
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * adjustSpeed);
+            yield return null;
+        }        
+    }
+
+    public void Climb(Vector3 destination)
+    {
+        StartCoroutine(ClimbCoroutine(destination));
+    }
+    private IEnumerator ClimbCoroutine(Vector3 destination)
+    {
+        while (Mathf.Abs(Vector3.Distance(transform.position, destination)) > 0.1f)
+        {
+            var newPosition = transform.position;
+            newPosition = Vector3.Lerp(newPosition, destination, Time.deltaTime * adjustSpeed);
+            transform.position = newPosition;
+            yield return null;
         }
+        
     }
 
     public void LookCamera()

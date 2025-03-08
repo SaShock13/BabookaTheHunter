@@ -22,10 +22,6 @@ public class InputPlayer : MonoBehaviour
     public static event Action<Vector3> OnMoveEvent;
     public static event Action<float,float> OnMouseMoveEvent;
 
-    //[SerializeField] private UnityEvent <Vector3> onMove = null;
-    //[SerializeField] private UnityEvent onJump = null;
-    //[SerializeField] private UnityEvent onTorch = null;
-    //[SerializeField] private UnityEvent <float,float> onMouseMove = null;
     [SerializeField] private float sensetivity = 200;
     [SerializeField] private float minMove = 0.1f;
 
