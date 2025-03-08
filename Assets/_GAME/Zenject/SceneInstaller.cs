@@ -8,6 +8,9 @@ public class SceneInstaller : MonoInstaller
     [SerializeField] private PlayerInteractor playerInteractor;
     [SerializeField] private InputPlayer input;
     [SerializeField] private PlayerStateMachine playerStateMachine;
+    [SerializeField] private Movement2_5_D movement2d;
+    [SerializeField] private Movement3_D movement3d;
+
 
 
     public override void InstallBindings()
@@ -17,6 +20,7 @@ public class SceneInstaller : MonoInstaller
         Container.Bind<InputPlayer>().FromInstance(input).AsSingle();
         Container.Bind<PlayerStateMachine>().FromInstance(playerStateMachine).AsSingle();
         Container.Bind<PlayerInteractor>().FromInstance(playerInteractor).AsSingle();
+        Container.Bind<IMovable>().FromInstance(movement2d).AsSingle();
 
 
     }

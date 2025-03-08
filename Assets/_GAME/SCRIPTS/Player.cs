@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Assets._GAME.SCRIPTS;
 using UnityEngine;
+using Zenject;
 
 public class Player : MonoBehaviour
 {
@@ -31,6 +32,14 @@ public class Player : MonoBehaviour
     private float adjustYValue = 0;
     private float adjustSpeed = 13f;
     private float playerHeight;
+    private IMovable _movement;
+
+    [Inject]
+    public void Construct(IMovable movement)
+    {
+        _movement = movement;
+    }
+
 
     public void GetTorch()
     {
@@ -70,9 +79,10 @@ public class Player : MonoBehaviour
 
     public void MovePlayer(Vector3 flatDirection)
     {
-        moveDirection = cameraTransform.TransformDirection(flatDirection);        
-        characterController.Move(moveDirection * runSpeed * Time.deltaTime);
-        animator.SetFloat("Speed", (moveDirection.magnitude * 5)>0.01f? moveDirection.magnitude *5 : 0);
+        _movement.Move(flatDirection);
+        //moveDirection = cameraTransform.TransformDirection(flatDirection);        
+        //characterController.Move(moveDirection * runSpeed * Time.deltaTime);
+        //animator.SetFloat("Speed", (moveDirection.magnitude * 5)>0.01f? moveDirection.magnitude *5 : 0);
     }
 
     //public void Interact()
